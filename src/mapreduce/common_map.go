@@ -48,7 +48,7 @@ func doMap(
 		reduceResults[currResult]+=element.Key
 		reduceResults[currResult]+=" "
 		reduceResults[currResult]+=element.Value
-		// reduceResults[currResult]+="\n"
+		reduceResults[currResult]+="\n"
 	}
 	for i :=0; i<nReduce; i++{
 		fmt.Println("The length is", len(reduceResults[0]))
