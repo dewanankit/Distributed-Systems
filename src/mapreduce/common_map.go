@@ -46,8 +46,9 @@ func doMap(
 		currResult := ihash(element.Key)%nReduce
 		// fmt.Println(len(reduceResults[currResult]))
 		reduceResults[currResult]+=element.Key
-		// reduceResults[currResult].append(element.Value)
-		reduceResults[currResult]+="\n"
+		reduceResults[currResult]+=" "
+		reduceResults[currResult]+=element.Value
+		// reduceResults[currResult]+="\n"
 	}
 	for i :=0; i<nReduce; i++{
 		fmt.Println("The length is", len(reduceResults[0]))
