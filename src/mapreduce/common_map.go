@@ -4,7 +4,7 @@ import (
 	"hash/fnv"
 	"io/ioutil"
 	"os"
-	"fmt"
+	// "fmt"
 )
 
 func doMap(
@@ -28,35 +28,8 @@ func doMap(
 	//
 
 
-	fileNames := make([]string,nReduce)
-	for i:=0;i<nReduce;i++{
-		fileNames[i] = reduceName(jobName, mapTask, i)
-	}
-	// fmt.Println(inFile,"\n\n\n\n")
-	// fmt.Println("file name is ",fileNames,"\n\n")
-	// fmt.Println(r)
-	byteContent,_ := ioutil.ReadFile(inFile)
-	fileContent := string(byteContent)
-	// stringArray := strings.Split(fileContent,"\n")
-	// fmt.Println(stringArray[0],"\n\n\n\n\n\n")
-	mapResult := mapF(inFile, fileContent)
-	// fmt.Println(mapResult[0])
-	var reduceResults []string = make([]string, nReduce)
-	for _, element := range mapResult{
-		currResult := ihash(element.Key)%nReduce
-		// fmt.Println(len(reduceResults[currResult]))
-		reduceResults[currResult]+=element.Key
-		reduceResults[currResult]+=" "
-		reduceResults[currResult]+=element.Value
-		reduceResults[currResult]+="\n"
-	}
-	for i :=0; i<nReduce; i++{
-		fmt.Println("The length is", len(reduceResults[0]))
-		name := reduceName(jobName, mapTask, i)
-		f, _ := os.Create(name)
-		ioutil.WriteFile(name,[]byte(reduceResults[i]),0777)
-		defer f.Close()
-	}
+
+
 	// fmt.Println("Hello World", reduceResults[1],"\n\n\n\n\n\n\n\n\n")
 	// mapF() is the map function provided by the application. The first
 	// argument should be the input file name, though the map function
@@ -89,6 +62,70 @@ func doMap(
 	//
 	// Your code here (Part I).
 	//
+	fileNames := make([]string,nReduce)
+	for i:=0;i<nReduce;i++{
+		fileNames[i] = reduceName(jobName, mapTask, i)
+	}
+	// fmt.Println(inFile,"\n\n\n\n")
+	// fmt.Println("file name is ",fileNames,"\n\n")
+	// fmt.Println(r)
+	byteContent,_ := ioutil.ReadFile(inFile)
+	fileContent := string(byteContent)
+	// stringArray := strings.Split(fileContent,"\n")
+	// fmt.Println(stringArray[0],"\n\n\n\n\n\n")
+	mapResult := mapF(inFile, fileContent)
+	// fmt.Println(mapResult[0])
+	// var reduceResults []string = make([]string, nReduce)
+	/*for _, element := range mapResult{
+		currResult := ihash(element.Key)%nReduce
+		// fmt.Println(len(reduceResults[currResult]))
+		reduceResults[currResult]+=element.Key
+		reduceResults[currResult]+=" "
+		reduceResults[currResult]+=element.Value
+		reduceResults[currResult]+="\n"
+	}
+	for i :=0; i<nReduce; i++{
+		fmt.Println("The length is", len(reduceResults[0]))
+		name := reduceName(jobName, mapTask, i)
+		f, _ := os.Create(name)
+		ioutil.WriteFile(name,[]byte(reduceResults[i]),0777)
+		defer f.Close()
+	}*/
+	/*
+		f, err := os.OpenFile(filename, os.O_APPEND|os.O_WRONLY, 0600)
+		if err != nil {
+		    panic(err)
+		}
+
+		defer f.Close()
+
+		if _, err = f.WriteString(text); err != nil {
+		    panic(err)
+}
+	*/
+	for i:=0; i < nReduce;i++{
+		name := reduceName(jobName, mapTask, i)
+		f, _ := os.Create(name)
+		f.Close()
+	}
+	for _, element := range mapResult{
+		currResult := ihash(element.Key)%nReduce
+		// fmt.Println(len(reduceResults[currResult]))
+		name := reduceName(jobName, mapTask, currResult)
+		f, err := os.OpenFile(name, os.O_APPEND|os.O_WRONLY, 0777)
+		// if err != nil {
+		// 		panic(err)
+		// }
+		stringR:=""
+		stringR+=element.Key
+		stringR+=" "
+		stringR+=element.Value
+		stringR+="\n"
+		if _, err = f.WriteString(stringR); err != nil {
+		     panic(err)
+		}
+		f.Close()
+	}
 }
 
 func ihash(s string) int {

@@ -1,5 +1,8 @@
 package mapreduce
-
+import (
+	// "io/ioutil"
+	"fmt"
+)
 func doReduce(
 	jobName string, // the name of the whole MapReduce job
 	reduceTask int, // which reduce task this is
@@ -43,5 +46,6 @@ func doReduce(
 	// file.Close()
 	//
 	// Your code here (Part I).
+	fmt.Println("Entered Reduce")
 	//
 }
