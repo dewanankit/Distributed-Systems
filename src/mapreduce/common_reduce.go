@@ -1,8 +1,13 @@
 package mapreduce
+
 import (
 	// "io/ioutil"
+	"bufio"
 	"fmt"
+	"log"
+	"os"
 )
+
 func doReduce(
 	jobName string, // the name of the whole MapReduce job
 	reduceTask int, // which reduce task this is
@@ -47,5 +52,23 @@ func doReduce(
 	//
 	// Your code here (Part I).
 	fmt.Println("Entered Reduce")
+	fmt.Println("jobName: ", jobName)
+	// outFile, _ := os.Create(outFile)
+	// m := make(map[string][]string)
+	for i := 0; i < nMap; i++ {
+		fileName := reduceName(jobName, i, reduceTask)
+		file, err := os.Open(fileName)
+		if err != nil {
+			log.Fatal(err)
+		}
+		defer file.Close()
+		scanner := bufio.NewScanner(file)
+		for scanner.Scan() {
+			fmt.Printf("%T", scanner.Text())
+		}
+		if err := scanner.Err(); err != nil {
+			log.Fatal(err)
+		}
+	}
 	//
 }

@@ -1,10 +1,10 @@
 package mapreduce
 
 import (
+	"fmt"
 	"hash/fnv"
 	"io/ioutil"
 	"os"
-	// "fmt"
 )
 
 func doMap(
@@ -26,9 +26,6 @@ func doMap(
 	// as the intermediate file for reduce task r. Call ihash() (see
 	// below) on each key, mod nReduce, to pick r for a key/value pair.
 	//
-
-
-
 
 	// fmt.Println("Hello World", reduceResults[1],"\n\n\n\n\n\n\n\n\n")
 	// mapF() is the map function provided by the application. The first
@@ -62,14 +59,14 @@ func doMap(
 	//
 	// Your code here (Part I).
 	//
-	fileNames := make([]string,nReduce)
-	for i:=0;i<nReduce;i++{
+	fileNames := make([]string, nReduce)
+	for i := 0; i < nReduce; i++ {
 		fileNames[i] = reduceName(jobName, mapTask, i)
 	}
 	// fmt.Println(inFile,"\n\n\n\n")
 	// fmt.Println("file name is ",fileNames,"\n\n")
 	// fmt.Println(r)
-	byteContent,_ := ioutil.ReadFile(inFile)
+	byteContent, _ := ioutil.ReadFile(inFile)
 	fileContent := string(byteContent)
 	// stringArray := strings.Split(fileContent,"\n")
 	// fmt.Println(stringArray[0],"\n\n\n\n\n\n")
@@ -92,37 +89,38 @@ func doMap(
 		defer f.Close()
 	}*/
 	/*
-		f, err := os.OpenFile(filename, os.O_APPEND|os.O_WRONLY, 0600)
-		if err != nil {
-		    panic(err)
+				f, err := os.OpenFile(filename, os.O_APPEND|os.O_WRONLY, 0600)
+				if err != nil {
+				    panic(err)
+				}
+
+				defer f.Close()
+
+				if _, err = f.WriteString(text); err != nil {
+				    panic(err)
 		}
-
-		defer f.Close()
-
-		if _, err = f.WriteString(text); err != nil {
-		    panic(err)
-}
 	*/
-	for i:=0; i < nReduce;i++{
+	for i := 0; i < nReduce; i++ {
 		name := reduceName(jobName, mapTask, i)
 		f, _ := os.Create(name)
 		f.Close()
 	}
-	for _, element := range mapResult{
-		currResult := ihash(element.Key)%nReduce
+	fmt.Println(len(mapResult))
+	for _, element := range mapResult {
+		currResult := ihash(element.Key) % nReduce
 		// fmt.Println(len(reduceResults[currResult]))
 		name := reduceName(jobName, mapTask, currResult)
-		f, err := os.OpenFile(name, os.O_APPEND|os.O_WRONLY, 0777)
+		f, err := os.OpenFile(name, os.O_APPEND|os.O_WRONLY, 0644)
 		// if err != nil {
 		// 		panic(err)
 		// }
-		stringR:=""
-		stringR+=element.Key
-		stringR+=" "
-		stringR+=element.Value
-		stringR+="\n"
+		stringR := ""
+		stringR += element.Key
+		stringR += ","
+		stringR += element.Key
+		stringR += "\n"
 		if _, err = f.WriteString(stringR); err != nil {
-		     panic(err)
+			panic(err)
 		}
 		f.Close()
 	}
