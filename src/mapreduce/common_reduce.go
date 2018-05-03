@@ -3,9 +3,12 @@ package mapreduce
 import (
 	// "io/ioutil"
 	"bufio"
-	"fmt"
+	// "fmt"
 	"log"
+    "encoding/json"
+	"strings"
 	"os"
+	"sort"
 )
 
 func doReduce(
@@ -51,10 +54,12 @@ func doReduce(
 	// file.Close()
 	//
 	// Your code here (Part I).
-	fmt.Println("Entered Reduce")
-	fmt.Println("jobName: ", jobName)
-	// outFile, _ := os.Create(outFile)
+	// fmt.Println("Entered Reduce")
+	// fmt.Println("jobName: ", jobName)
+	mapS := make(map[string][]string)
+	outF, _ := os.Create(outFile)
 	// m := make(map[string][]string)
+
 	for i := 0; i < nMap; i++ {
 		fileName := reduceName(jobName, i, reduceTask)
 		file, err := os.Open(fileName)
@@ -64,11 +69,25 @@ func doReduce(
 		defer file.Close()
 		scanner := bufio.NewScanner(file)
 		for scanner.Scan() {
-			fmt.Printf("%T", scanner.Text())
+			// fmt.Printf("%T", scanner.Text())
+			arrayS := strings.Split(scanner.Text(), ",")
+			mapS[arrayS[0]] = append(mapS[arrayS[0]], arrayS[1])
+			// fmt.Println(mapS[arrayS[0]]	)
 		}
 		if err := scanner.Err(); err != nil {
 			log.Fatal(err)
 		}
 	}
+	var keys []string
+	for k := range mapS{
+		keys = append(keys,k)
+	}
+	sort.Strings(keys)
+    enc := json.NewEncoder(outF)
+    for i:=0; i < len(keys); i++{
+        jsonVal := reduceF(keys[i], mapS[keys[i]])
+        enc.Encode(KeyValue{keys[i], jsonVal})
+    }
+    outF.Close()
 	//
 }

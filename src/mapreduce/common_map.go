@@ -1,7 +1,7 @@
 package mapreduce
 
 import (
-	"fmt"
+	// "fmt"
 	"hash/fnv"
 	"io/ioutil"
 	"os"
@@ -105,7 +105,7 @@ func doMap(
 		f, _ := os.Create(name)
 		f.Close()
 	}
-	fmt.Println(len(mapResult))
+	// fmt.Println(len(mapResult))
 	for _, element := range mapResult {
 		currResult := ihash(element.Key) % nReduce
 		// fmt.Println(len(reduceResults[currResult]))
