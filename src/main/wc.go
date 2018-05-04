@@ -4,6 +4,9 @@ import (
 	"fmt"
 	"mapreduce"
 	"os"
+	"strconv"
+	"strings"
+	"unicode"
 )
 
 //
@@ -14,7 +17,31 @@ import (
 // of key/value pairs.
 //
 func mapF(filename string, contents string) []mapreduce.KeyValue {
-	// Your code here (Part II).
+	// fmt.Println(contents)
+	mapS := make(map[string]int)
+	lines:= strings.Split(contents,"\n")
+	// fmt.Println(contents)
+	for i := 0; i<len(lines);i++{
+		f := func(c rune) bool {
+			return !unicode.IsLetter(c) && !unicode.IsNumber(c)
+		}
+		words := strings.FieldsFunc(lines[i],f)
+		for j:= 0; j<len(words);j++{
+			if words[j] != ""{
+				mapS[words[j]]=mapS[words[j]]+1
+			}
+		}
+	}
+	retSplice := make([]mapreduce.KeyValue,len(mapS))
+	k := 0
+	for i,_ := range mapS{
+		retSplice[k].Key = i
+		retSplice[k].Value = string(strconv.Itoa(mapS[i]))
+		k+=1
+		// fmt.Println(retSplice[k].Key, retSplice[k].Value )
+	}
+	// fmt.Println(retSplice)
+	return retSplice
 }
 
 //
@@ -23,6 +50,15 @@ func mapF(filename string, contents string) []mapreduce.KeyValue {
 // any map task.
 //
 func reduceF(key string, values []string) string {
+	sum:=0
+	// fmt.Println("called")
+	for i:=0; i<len(values);i++{
+		val, _ := strconv.Atoi(values[i])
+		sum+=val
+	}
+	// fmt.Println(sum)
+	return strconv.Itoa(sum)
+
 	// Your code here (Part II).
 }
 

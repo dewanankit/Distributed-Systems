@@ -117,7 +117,7 @@ func doMap(
 		stringR := ""
 		stringR += element.Key
 		stringR += ","
-		stringR += element.Key
+		stringR += element.Value
 		stringR += "\n"
 		if _, err = f.WriteString(stringR); err != nil {
 			panic(err)
